@@ -1,0 +1,12 @@
+version: '3'
+services:
+    node-express:
+        build: ./node-express
+        ports:
+            - "5000:5000"
+    nginx:
+        build: ./nginx
+        depends_on:
+            - node-express
+        ports:
+            - "80:80"

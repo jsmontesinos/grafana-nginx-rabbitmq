@@ -1,0 +1,19 @@
+global:
+  external_labels:
+      monitor: 'rabbitmq-monitor'
+
+rule_files:
+
+scrape_configs:
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+  - job_name: 'rabbitmq'
+    #scrape_interval: 10s
+    static_configs:
+      - targets: ['rabbitmq-exporter:9090']
+  - job_name: 'movie-quote-consumer'
+    #scrape_interval: 1m
+    #metrics_path: '/prometheus'
+    static_configs:
+      - targets: ['nginx-exporter:9113']
