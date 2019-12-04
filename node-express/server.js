@@ -1,8 +1,12 @@
 var express = require('express');
 var app = express();
 
-app.get('/by-ip/node-express/*', function (req, res) {
-  res.send('Hello World!');
+app.get('/', function (req, res) {
+  res.send('OK')
+});
+
+app.post('/', function (req, res) {
+  res.send('OK');
 });
 
 app.listen(5000, function () {
