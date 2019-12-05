@@ -19,8 +19,8 @@ services:
     ports:
       - "9113:9113"
     environment:
-      SCRAPE_URI: http://nginx:3002/metrics
-      TELEMETRY_PATH: /prometheus
+      SCRAPE_URI: http://nginx/metrics
+      TELEMETRY_PATH: /prometheus_nginx
       NGINX_RETRIES: 10
       
   prometheus:

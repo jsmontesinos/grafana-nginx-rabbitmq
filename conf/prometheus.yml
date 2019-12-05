@@ -8,12 +8,12 @@ scrape_configs:
   - job_name: 'prometheus'
     static_configs:
       - targets: ['localhost:9090']
-  - job_name: 'rabbitmq'
+  - job_name: 'rabbitmq-job'
     #scrape_interval: 10s
     static_configs:
       - targets: ['rabbitmq-exporter:9090']
-  - job_name: 'movie-quote-consumer'
-    #scrape_interval: 1m
-    #metrics_path: '/prometheus'
+  - job_name: 'nginx-job'
+    scrape_interval: 1m
+    metrics_path: '/prometheus_nginx'
     static_configs:
       - targets: ['nginx-exporter:9113']

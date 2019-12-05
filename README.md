@@ -16,4 +16,12 @@ To check everything is running correctly, launch this from another terminal:
 curl -X POST -H "Content-Type: application/json" -d '{"hello": "world"}' http://localhost
 ```
 
+## Graphana
+
+Query for nginx graphic:
+
+```
+delta(nginx_http_requests_total{job="nginx-job"}[2m])
+```
+
 
