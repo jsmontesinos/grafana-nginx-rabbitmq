@@ -1,14 +1,15 @@
 version: '3'
 services:
     rabbitmq:
-      image: rabbitmq:3-management
-      container_name: "rabbitmq"
-      environment:
-        - RABBITMQ_DEFAULT_USER=guest
-        - RABBITMQ_DEFAULT_PASS=guest
-      ports:
-        - "15672:15672"
-        - "5672:5672"
+        image: rabbitmq:3-management
+        container_name: "rabbitmq"
+        environment:
+            - RABBITMQ_DEFAULT_USER=guest
+            - RABBITMQ_DEFAULT_PASS=guest
+        ports:
+            - "15672:15672"
+            - "5672:5672"
+
     node-express:
         build: ./node-express
         container_name: "node"
@@ -16,6 +17,7 @@ services:
             - rabbitmq
         ports:
             - "5000:5000"
+
     nginx:
         build: ./nginx
         container_name: "nginx"
@@ -23,3 +25,46 @@ services:
             - node-express
         ports:
             - "80:80"
+
+    rabbitmq_exporter:
+        image: kbudde/rabbitmq-exporter
+        container_name: "rabbitmq-exporter"
+        ports:
+            - "9999:9090"
+        environment:
+            - RABBIT_URL=http://rabbitmq:15672
+            - RABBIT_USER=guest
+            - RABBIT_PASSWORD=guest
+            - PUBLISH_PORT=9090
+            - OUTPUT_FORMAT=JSON
+            - LOG_LEVEL=debug
+
+    nginx_exporter:
+        image: nginx/nginx-prometheus-exporter:0.4.2
+        container_name: "nginx-exporter"
+        ports:
+            - "9113:9113"
+        environment:
+            - SCRAPE_URI=http://nginx/metrics
+            - TELEMETRY_PATH=/prometheus_nginx
+            - NGINX_RETRIES=10
+        
+    prometheus:
+        image: prom/prometheus:v1.4.1
+        ports:
+            - "9090:9090"
+        volumes:
+            - ./conf/prometheus.yml:/etc/prometheus/prometheus.yml
+        depends_on:
+            - rabbitmq_exporter
+
+    grafana:
+        image: grafana/grafana
+        ports:
+            - "3300:3000"
+        volumes:
+            - grafana-storage:/var/lib/grafana
+        depends_on:
+            - prometheus
+volumes:
+  grafana-storage:

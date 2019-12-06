@@ -18,6 +18,14 @@ curl -X POST -H "Content-Type: application/json" -d '{"hello": "world"}' http://
 
 ## Graphana
 
+Open grafana interface: [http://localhost:3300](http://localhost:3300)
+
+To learn how to query prometheus data with grafana take a look to this:
+
+https://grafana.com/docs/grafana/latest/features/datasources/prometheus/#query-editor
+
+### Examples
+
 Query for nginx graphic:
 
 ```
