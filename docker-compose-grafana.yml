@@ -1,0 +1,24 @@
+version: '3'
+services:    
+    prometheus:
+        image: prom/prometheus:v2.23.0
+        ports:
+            - "9090:9090"
+        volumes:
+            - ./conf/prometheus.yml:/etc/prometheus/prometheus.yml
+            -  prometheus-storage:/prometheus
+        command:
+            - "--config.file=/etc/prometheus/prometheus.yml"
+            - "--storage.tsdb.path=/prometheus"
+            - "--storage.tsdb.retention.time=30d"
+    grafana:
+        image: grafana/grafana:7.3.3
+        ports:
+            - "3300:3000"
+        volumes:
+            - grafana-storage:/var/lib/grafana
+        depends_on:
+            - prometheus
+volumes:
+  grafana-storage:
+  prometheus-storage:
