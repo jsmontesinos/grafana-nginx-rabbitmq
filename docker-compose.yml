@@ -7,6 +7,10 @@ services:
             - rabbitmq-server
         ports:
             - "5000:5000"
+        volumes:
+            - ./node-express:/usr/src/app
+            - /usr/src/app/node-express
+        command: bash -c "npm ci && npm run start-watch"
 
     rabbitmq-server:
         image: rabbitmq:3.8.2
