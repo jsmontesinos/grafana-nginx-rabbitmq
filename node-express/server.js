@@ -28,11 +28,18 @@ const purchaseAmountHistogram = new promClient.Histogram({
   buckets: [1, 5, 10, 50, 100]
 });
 
+const purchaseAmountSummary = new promClient.Summary({
+  name: 'purchase_amount_summary',
+  help: 'purchase amounts summary',
+  percentiles: [0.5],
+});
+
 const registry = new promClient.Registry();
 promClient.collectDefaultMetrics({ register: registry });
 registry.registerMetric(requestCounter);
 registry.registerMetric(purchaseAmount);
 registry.registerMetric(purchaseAmountHistogram);
+registry.registerMetric(purchaseAmountSummary);
 
 app.get('/cart', function (req, res) {
   requestCounter.inc({path: '/cart'});
@@ -49,6 +56,7 @@ app.post('/purchase', (req, res) => {
   const { amount } = req.body;
   purchaseAmount.set({}, amount);
   purchaseAmountHistogram.observe(amount);
+  purchaseAmountSummary.observe(amount);
   queueChannel.sendToQueue(queue, Buffer.from(JSON.stringify({ purchaseAmount: amount })));
   res.send('OK');
 });
