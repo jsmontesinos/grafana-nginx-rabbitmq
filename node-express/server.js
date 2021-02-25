@@ -29,7 +29,7 @@ const purchaseAmountHistogram = new promClient.Histogram({
 });
 
 const registry = new promClient.Registry();
-//promClient.collectDefaultMetrics({ register: registry });
+promClient.collectDefaultMetrics({ register: registry });
 registry.registerMetric(requestCounter);
 registry.registerMetric(purchaseAmount);
 registry.registerMetric(purchaseAmountHistogram);
@@ -55,15 +55,6 @@ app.post('/purchase', (req, res) => {
 
 app.get('/metrics', (req, res) => {
   res.send(registry.metrics());
-});
-
-app.post('/', function (req, res) {
-  const start = new Date();
-  const msg = req.body;
-  console.log("Message received: ", msg);
-  
-  const end = new Date() - start;
-  res.send('OK');
 });
 
 app.listen(5000, function () {
