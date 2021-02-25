@@ -1,22 +1,25 @@
 version: '3'
 services:
-    rabbitmq:
-        image: rabbitmq:3-management
-        container_name: "rabbitmq"
+    node-express:
+        build: ./node-express
+        container_name: "node-express"
+        depends_on:
+            - rabbitmq-server
+        ports:
+            - "5000:5000"
+
+    rabbitmq-server:
+        image: rabbitmq:3.8.2
+        container_name: "rabbitmq-server"
         environment:
             - RABBITMQ_DEFAULT_USER=guest
             - RABBITMQ_DEFAULT_PASS=guest
         ports:
             - "15672:15672"
+            - "15692:15692"
             - "5672:5672"
-
-    node-express:
-        build: ./node-express
-        container_name: "node"
-        depends_on:
-            - rabbitmq
-        ports:
-            - "5000:5000"
+        volumes:
+            - ./conf/rabbitmq_enabled_plugins:/etc/rabbitmq/enabled_plugins
 
     nginx:
         build: ./nginx
@@ -24,20 +27,7 @@ services:
         depends_on:
             - node-express
         ports:
-            - "80:80"
-
-    rabbitmq_exporter:
-        image: kbudde/rabbitmq-exporter
-        container_name: "rabbitmq-exporter"
-        ports:
-            - "9999:9090"
-        environment:
-            - RABBIT_URL=http://rabbitmq:15672
-            - RABBIT_USER=guest
-            - RABBIT_PASSWORD=guest
-            - PUBLISH_PORT=9090
-            - OUTPUT_FORMAT=JSON
-            - LOG_LEVEL=debug
+            - "8080:80"
 
     nginx_exporter:
         image: nginx/nginx-prometheus-exporter:0.4.2
